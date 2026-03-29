@@ -82,11 +82,14 @@ docker service create \
 **사용 가능한 기본 속성**:
 
 ```
-node.id          == abc123
-node.hostname    == worker1
-node.role        == manager | worker
-node.labels.xxx  == 직접 정의한 레이블
-engine.labels.xxx == Docker Engine 레이블
+node.id            == abc123
+node.hostname      == worker1
+node.ip            == 10.0.0.5
+node.role          == manager | worker
+node.platform.os   == linux | windows
+node.platform.arch == x86_64 | aarch64
+node.labels.xxx    == 직접 정의한 레이블
+engine.labels.xxx  == Docker Engine 레이블
 ```
 
 ---

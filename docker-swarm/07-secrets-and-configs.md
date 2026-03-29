@@ -40,8 +40,10 @@ docker inspect <container_id>
 │ 저장 위치        │  Manager 암호화 │ Manager 일반 저장   │
 │ 전송 방식        │  TLS 암호화     │ TLS 전송            │
 │ 컨테이너 내 위치 │  /run/secrets/  │ /run/configs/       │
-│ 메모리 저장      │  tmpfs (RAM)    │ tmpfs (RAM)         │
+│ 메모리 저장      │  tmpfs (RAM)    │ 파일시스템 직접 마운트│
 │ 수정 가능        │  불가 (재생성)  │ 불가 (재생성)       │
+│ 최대 크기        │  500 KB         │ 500 KB              │
+│ 기본 퍼미션      │  0444 (읽기전용)│ 0444 (읽기전용)     │
 └──────────────────┴──────────────────────────────────────┘
 ```
 
@@ -218,7 +220,7 @@ docker secret rm db_password
 ## 요약
 
 - **Secret**: 비밀번호/키 저장 — 암호화, tmpfs 마운트, `/run/secrets/`
-- **Config**: 설정 파일 저장 — tmpfs 마운트, `/run/configs/`
+- **Config**: 설정 파일 저장 — 파일시스템 직접 마운트, `/run/configs/`
 - `_FILE` 환경변수 패턴으로 앱에 Secret 경로 전달
 - Secret/Config는 수정 불가 → 새 버전 생성 후 서비스 업데이트
 - Compose 파일에서 `external: true`로 미리 생성된 Secret 참조

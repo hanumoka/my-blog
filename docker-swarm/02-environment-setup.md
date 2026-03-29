@@ -161,10 +161,13 @@ docker swarm join-token manager   # Manager 토큰
 # 노드 상세 정보
 docker node inspect manager1 --pretty
 
-# 노드를 드레인 모드로 (유지보수 시 — 새 작업 배분 안 함)
+# 노드를 드레인 모드로 (유지보수 시 — 기존 Task 다른 노드로 이전)
 docker node update --availability drain worker1
 
-# 드레인 해제
+# 일시 정지 모드 (새 Task 배분 안 함, 기존 Task는 유지)
+docker node update --availability pause worker1
+
+# 다시 활성화
 docker node update --availability active worker1
 
 # Swarm에서 노드 제거 (Worker에서 먼저 실행)
@@ -204,7 +207,7 @@ docker node rm worker1
 - `docker swarm join --token <TOKEN> <IP>:2377` — 클러스터 참가 (Worker)
 - `docker node ls` — 클러스터 노드 상태 확인
 - 방화벽에서 2377, 7946, 4789 포트 허용 필요
-- `drain` 모드로 노드 유지보수 중 안전하게 서비스 이전 가능
+- 노드 availability: `active`(정상), `pause`(신규 Task 중단), `drain`(기존 Task 이전)
 
 ---
 

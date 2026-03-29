@@ -74,6 +74,49 @@ docker swarm update --cert-expiry 720h   # 30일로 변경
 docker swarm ca --rotate
 ```
 
+### Autolock (Manager 키 보호)
+
+Manager 노드의 TLS 키와 Raft 로그 암호화 키를 디스크에서 보호합니다.
+서버가 탈취되더라도 키가 노출되지 않습니다.
+
+```bash
+# 새 클러스터 생성 시 Autolock 활성화
+docker swarm init --autolock
+
+# 기존 클러스터에 Autolock 적용
+docker swarm update --autolock=true
+# → 잠금 해제 키가 출력됨 — 반드시 안전한 곳에 보관!
+
+# Docker 재시작 후 반드시 잠금 해제 필요
+docker swarm unlock
+# → 저장해둔 잠금 해제 키 입력
+
+# 잠금 해제 키 확인 (활성 상태에서만)
+docker swarm unlock-key
+
+# 잠금 해제 키 로테이션
+docker swarm unlock-key --rotate
+```
+
+> ⚠️ Autolock이 활성화되면 Docker 데몬 재시작 시 수동으로 unlock해야 합니다.
+> 키를 분실하면 Manager를 복구할 수 없으므로 반드시 별도 보관하세요.
+
+### Join Token 주기적 교체
+
+Join Token이 유출되면 악의적인 노드가 클러스터에 참가할 수 있습니다.
+주기적으로 토큰을 교체합니다.
+
+```bash
+# Worker 토큰 교체
+docker swarm join-token --rotate worker
+
+# Manager 토큰 교체
+docker swarm join-token --rotate manager
+```
+
+> 토큰 교체 후 기존 노드는 영향받지 않습니다.
+> 새로 참가할 노드만 새 토큰이 필요합니다.
+
 ### 컨테이너 보안 강화
 
 ```yaml
@@ -242,12 +285,14 @@ netstat -tlnp | grep -E "2377|7946|4789"
   [ ] Health check 설정
   [ ] Secret/Config로 민감 정보 관리
   [ ] read_only + no-new-privileges 보안 옵션 적용
+  [ ] Autolock 활성화 (잠금 해제 키 별도 보관)
 
 운영 중:
   [ ] 정기 Swarm 상태 백업 (cron)
   [ ] Prometheus + Grafana 모니터링 가동
   [ ] 로그 드라이버 max-size 설정
   [ ] 인증서 만료일 모니터링
+  [ ] Join Token 주기적 교체
   [ ] 정기 보안 패치 (drain → 업데이트 → active)
 ```
 
@@ -257,6 +302,8 @@ netstat -tlnp | grep -E "2377|7946|4789"
 
 - **HA Manager**: 홀수 개, 여러 가용 영역에 분산 배치
 - **자동 TLS**: Swarm 기본 제공 — 인증서 로테이션 주기 관리
+- **Autolock**: Manager 키 보호 — 재시작 시 수동 unlock 필요
+- **Token 교체**: `--rotate`로 Join Token 주기적 갱신
 - **컨테이너 보안**: read_only + no-new-privileges + 일반 유저 실행
 - **백업**: `/var/lib/docker/swarm` 정기 백업 (cron)
 - **복구**: `docker swarm init --force-new-cluster`로 단일 Manager 복구

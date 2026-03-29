@@ -83,9 +83,9 @@ docker stats $(docker ps -q)
 version: "3.9"
 
 services:
-  # 각 노드의 시스템 메트릭 수집
+  # 각 노드의 시스템 메트릭 수집 (프로덕션에서는 버전 고정 권장)
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.9.1
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -100,7 +100,7 @@ services:
 
   # Swarm 서비스 메트릭 수집
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.52.1
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -113,7 +113,7 @@ services:
 
   # 메트릭 저장소
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.10.0
     configs:
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
@@ -129,7 +129,7 @@ services:
 
   # 시각화 대시보드
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:12.4.2
     ports:
       - "3000:3000"
     environment:
@@ -184,6 +184,29 @@ scrape_configs:
         type: A
         port: 8080
 ```
+
+**prometheus.yml (대안: 네이티브 Swarm 서비스 디스커버리)**:
+
+Prometheus 2.20.0+부터 Docker Swarm 네이티브 서비스 디스커버리를 지원합니다.
+`dns_sd_configs` 대신 `dockerswarm_sd_configs`를 사용하면 노드/서비스/태스크 메타데이터까지 자동으로 수집됩니다.
+
+```yaml
+# prometheus.yml (네이티브 Swarm SD)
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'swarm-tasks'
+    dockerswarm_sd_configs:
+      - host: unix:///var/run/docker.sock
+        role: tasks    # nodes, services, tasks 중 선택
+    relabel_configs:
+      - source_labels: [__meta_dockerswarm_service_name]
+        target_label: service_name
+```
+
+> 이 방식을 사용하려면 Prometheus가 Docker 소켓에 접근 가능해야 합니다.
+> 볼륨에 `/var/run/docker.sock:/var/run/docker.sock:ro`를 추가하세요.
 
 **배포**:
 
@@ -263,4 +286,5 @@ Prometheus → 조건 충족 → Alertmanager → Slack/이메일 알림
 
 - [Docker Service Logs](https://docs.docker.com/reference/cli/docker/service/logs/) — docs.docker.com
 - [Prometheus 공식 문서](https://prometheus.io/docs/introduction/overview/) — prometheus.io
+- [Prometheus Docker Swarm 가이드](https://prometheus.io/docs/guides/dockerswarm/) — 네이티브 Swarm SD 설정
 - [Grafana 공식 문서](https://grafana.com/docs/) — grafana.com

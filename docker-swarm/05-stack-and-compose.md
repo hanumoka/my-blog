@@ -229,6 +229,12 @@ docker compose up          docker stack deploy
 > 운영 배포 시 동일 파일로 `docker stack deploy`를 사용합니다.
 > `build:` 섹션은 Swarm에서 무시되므로, 배포 전 이미지를 레지스트리에 올려야 합니다.
 
+> ⚠️ **Compose V1 (`docker-compose`, 하이픈) 지원 종료**
+> - Docker Compose V1은 2023년 7월 **완전 EOL** — Docker Desktop에서도 제거됨
+> - 현재는 **Compose V2** (`docker compose`, 스페이스)가 표준 (Go 기반 CLI 플러그인)
+> - Compose V2에서 `version` 필드는 deprecated (생략해도 무방)
+> - 단, `docker stack deploy`는 여전히 **version 3.0+ 형식**이 필요
+
 ---
 
 ## 요약

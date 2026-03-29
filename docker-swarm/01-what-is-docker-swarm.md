@@ -121,9 +121,10 @@ Manager 3개 구성 시:
 ## 현재 상태 (2026년 기준)
 
 - Docker Engine v29에 Swarm 모드 내장 (별도 설치 불필요)
-- **Swarm 모드**는 현재도 지원 중
-- ⚠️ 과거의 "Docker Classic Swarm" (별도 바이너리)과는 다름 — 완전히 deprecated
+- **Swarm 모드**는 현재도 지원 중 — Mirantis가 **2030년까지 장기 지원** 약속 (MKE 3)
+- ⚠️ 과거의 "Docker Classic Swarm" (별도 바이너리)과는 다름 — v23.0에서 완전 제거됨
 - 신기능 개발보다는 안정성/보안 패치 중심으로 유지보수됨
+- Docker v23.0에서 Kubernetes 스택/컨텍스트 지원이 제거되어, `docker stack`의 **유일한 오케스트레이터**가 됨
 
 ---
 
