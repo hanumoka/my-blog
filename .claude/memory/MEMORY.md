@@ -9,7 +9,7 @@
 
 | 항목 | 수치 |
 |------|------|
-| 완성 블로그 | 18편 |
+| 완성 블로그 | 33편 |
 | 트러블슈팅 패턴 | 0건 |
 | 반복 실수 패턴 | 0건 |
 
@@ -21,6 +21,7 @@
 |------|------|------|
 | docker-swarm | 완료 | 11 |
 | prisma-vs-typeorm | 완료 | 7 |
+| nestjs | 완료 | 15 |
 | spring-seaweedfs | 미시작 | 0 |
 | spring-temporal | 미시작 | 0 |
 
@@ -40,6 +41,7 @@
 1. (2026-03-29) docker-swarm 시리즈 11편 완성 — Docker Engine v29 기준, 입문~고급
 2. (2026-03-29) 블로그 작성 규칙 확정 — 웹 검색 필수, ASCII 시각화, 실습 포함
 3. (2026-03-29) prisma-vs-typeorm 시리즈 7편 완성 — Prisma v7.4 vs TypeORM v0.3.28, NestJS 초보자 대상
+4. (2026-03-29) nestjs 시리즈 15편 완성 — NestJS v11.1.x, Spring 개발자 대상
 
 ---
 

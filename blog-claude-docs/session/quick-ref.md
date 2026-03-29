@@ -10,9 +10,9 @@
 
 **my-blog**는 기술 부채 해소를 위한 학습 가이드 블로그 작성 프로젝트.
 
-**목표**: Docker Swarm / Prisma vs TypeORM / Spring+SeaweedFS / Spring+Temporal 주제를 상세하고 쉬운 학습 가이드로 작성.
+**목표**: Docker Swarm / Prisma vs TypeORM / NestJS / Spring+SeaweedFS / Spring+Temporal 주제를 상세하고 쉬운 학습 가이드로 작성.
 
-**현재 상태**: docker-swarm 11편 + prisma-vs-typeorm 7편 완료 (총 18편) — 다음 주제 대기 중
+**현재 상태**: docker-swarm 11편 + prisma-vs-typeorm 7편 + nestjs 15편 완료 (총 33편) — 다음 주제 대기 중
 
 ---
 
@@ -22,6 +22,7 @@
 |------|------|------|
 | docker-swarm | 완료 | 11편 |
 | prisma-vs-typeorm | 완료 | 7편 |
+| nestjs | 완료 | 15편 |
 | spring-seaweedfs | 미시작 | 0편 |
 | spring-temporal | 미시작 | 0편 |
 
@@ -60,4 +61,4 @@
 
 ---
 
-**마지막 업데이트**: 2026-03-29 (prisma-vs-typeorm 시리즈 7편 완료)
+**마지막 업데이트**: 2026-03-29 (nestjs 시리즈 15편 완료)

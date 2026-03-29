@@ -37,6 +37,28 @@
 
 ---
 
+## nestjs/
+
+| 상태 | 제목 | 파일 | 날짜 |
+|------|------|------|------|
+| [x] | NestJS 소개 | `01-nestjs-intro.md` | 2026-03-29 |
+| [x] | 개발 환경 설정 | `02-project-setup.md` | 2026-03-29 |
+| [x] | Module | `03-module.md` | 2026-03-29 |
+| [x] | Controller | `04-controller.md` | 2026-03-29 |
+| [x] | Provider와 Service | `05-provider-service.md` | 2026-03-29 |
+| [x] | 의존성 주입 심화 | `06-dependency-injection.md` | 2026-03-29 |
+| [x] | Middleware | `07-middleware.md` | 2026-03-29 |
+| [x] | Pipe | `08-pipe.md` | 2026-03-29 |
+| [x] | Guard | `09-guard.md` | 2026-03-29 |
+| [x] | Interceptor | `10-interceptor.md` | 2026-03-29 |
+| [x] | Exception Filter | `11-exception-filter.md` | 2026-03-29 |
+| [x] | Custom Decorator | `12-custom-decorator.md` | 2026-03-29 |
+| [x] | 요청 라이프사이클 | `13-request-lifecycle.md` | 2026-03-29 |
+| [x] | Database + Prisma | `14-database-prisma.md` | 2026-03-29 |
+| [x] | 실무 전환 가이드 | `15-practical-transition.md` | 2026-03-29 |
+
+---
+
 ## spring-seaweedfs/
 
 | 상태 | 제목 | 파일 | 날짜 |
