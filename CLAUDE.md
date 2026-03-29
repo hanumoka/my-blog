@@ -152,7 +152,7 @@ host: YOUR_HOST
 
 ---
 
-## 7. 필수 프로토콜
+## 8. 필수 프로토콜
 
 ### Auto Memory
 세션 종료 전 `.project-memory/context.md` 갱신 (자동 또는 `/blog-memory-save`).

@@ -18,6 +18,10 @@ credentials/
 Thumbs.db
 desktop.ini
 
+# Windows 아티팩트
+nul
+*.stackdump
+
 # 임시 파일
 *.tmp
 *.bak
