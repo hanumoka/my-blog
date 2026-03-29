@@ -16,6 +16,7 @@
 - `docker-swarm/` — Docker Swarm 오케스트레이션
 - `prisma-vs-typeorm/` — Prisma vs TypeORM 비교 가이드 (NestJS)
 - `nestjs/` — NestJS 학습 가이드 (Spring 개발자 대상)
+- `nestjs-nextjs-monorepo/` — NestJS + Next.js + Prisma 모노리포 가이드
 - `spring-seaweedfs/` — Spring Boot + SeaweedFS 분산 파일 시스템
 - `spring-temporal/` — Spring Boot + Temporal 워크플로우 엔진
 
@@ -88,6 +89,7 @@ my-blog/
 ├── docker-swarm/              # Docker Swarm 블로그
 ├── prisma-vs-typeorm/         # Prisma vs TypeORM 블로그
 ├── nestjs/                    # NestJS 학습 가이드 블로그
+├── nestjs-nextjs-monorepo/    # NestJS + Next.js + Prisma 모노리포 블로그
 ├── spring-seaweedfs/          # Spring + SeaweedFS 블로그
 └── spring-temporal/           # Spring + Temporal 블로그
 ```

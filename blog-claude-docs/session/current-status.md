@@ -59,6 +59,23 @@
 
 ---
 
+## nestjs-nextjs-monorepo/
+
+| 상태 | 제목 | 파일 | 날짜 |
+|------|------|------|------|
+| [x] | 모노리포란? | `01-monorepo-intro.md` | 2026-03-29 |
+| [x] | 프로젝트 초기 설정 | `02-project-setup.md` | 2026-03-29 |
+| [x] | 공유 패키지 만들기 | `03-shared-package.md` | 2026-03-29 |
+| [x] | Prisma 공유 패키지 | `04-prisma-package.md` | 2026-03-29 |
+| [x] | NestJS 백엔드 셋업 | `05-nestjs-backend.md` | 2026-03-29 |
+| [x] | Next.js 프론트엔드 셋업 | `06-nextjs-frontend.md` | 2026-03-29 |
+| [x] | 타입 안전한 API 통신 | `07-type-sharing.md` | 2026-03-29 |
+| [x] | 개발 환경 구성 | `08-dev-environment.md` | 2026-03-29 |
+| [x] | Docker 빌드 전략 | `09-docker-build.md` | 2026-03-29 |
+| [x] | 모범 사례와 운영 가이드 | `10-best-practices.md` | 2026-03-29 |
+
+---
+
 ## spring-seaweedfs/
 
 | 상태 | 제목 | 파일 | 날짜 |
