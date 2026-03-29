@@ -23,6 +23,20 @@
 
 ---
 
+## prisma-vs-typeorm/
+
+| 상태 | 제목 | 파일 | 날짜 |
+|------|------|------|------|
+| [x] | ORM이란? | `01-orm-overview.md` | 2026-03-29 |
+| [x] | 스키마 정의 비교 | `02-schema-definition.md` | 2026-03-29 |
+| [x] | CRUD 쿼리 비교 | `03-crud-queries.md` | 2026-03-29 |
+| [x] | 관계(Relations) 비교 | `04-relations.md` | 2026-03-29 |
+| [x] | 마이그레이션 비교 | `05-migrations.md` | 2026-03-29 |
+| [x] | NestJS 통합 비교 | `06-nestjs-integration.md` | 2026-03-29 |
+| [x] | 실무 가이드 | `07-practical-guide.md` | 2026-03-29 |
+
+---
+
 ## spring-seaweedfs/
 
 | 상태 | 제목 | 파일 | 날짜 |

@@ -14,6 +14,7 @@
 
 **현재 주제**:
 - `docker-swarm/` — Docker Swarm 오케스트레이션
+- `prisma-vs-typeorm/` — Prisma vs TypeORM 비교 가이드 (NestJS)
 - `spring-seaweedfs/` — Spring Boot + SeaweedFS 분산 파일 시스템
 - `spring-temporal/` — Spring Boot + Temporal 워크플로우 엔진
 
@@ -84,6 +85,7 @@ my-blog/
 ├── .project-memory/           # 세션 컨텍스트 (자동 관리)
 ├── .claude/                   # Claude Code 설정
 ├── docker-swarm/              # Docker Swarm 블로그
+├── prisma-vs-typeorm/         # Prisma vs TypeORM 블로그
 ├── spring-seaweedfs/          # Spring + SeaweedFS 블로그
 └── spring-temporal/           # Spring + Temporal 블로그
 ```
