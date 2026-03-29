@@ -12,7 +12,7 @@
 
 **목표**: Docker Swarm / Prisma vs TypeORM / NestJS / 모노리포 / Spring+SeaweedFS / Spring+Temporal 주제를 상세하고 쉬운 학습 가이드로 작성.
 
-**현재 상태**: docker-swarm 11편 + prisma-vs-typeorm 7편 + nestjs 15편 + nestjs-nextjs-monorepo 10편 완료 (총 43편) — 다음 주제 대기 중
+**현재 상태**: docker-swarm 11편 + prisma-vs-typeorm 7편 + nestjs 15편 + nestjs-nextjs-monorepo 10편 + spring-seaweedfs 10편 완료 (총 53편) — spring-temporal 작성 예정
 
 ---
 
@@ -24,7 +24,7 @@
 | prisma-vs-typeorm | 완료 | 7편 |
 | nestjs | 완료 | 15편 |
 | nestjs-nextjs-monorepo | 완료 | 10편 |
-| spring-seaweedfs | 미시작 | 0편 |
+| spring-seaweedfs | 완료 | 10편 |
 | spring-temporal | 미시작 | 0편 |
 
 > 상세: [current-status.md](current-status.md)
@@ -62,4 +62,4 @@
 
 ---
 
-**마지막 업데이트**: 2026-03-29 (nestjs-nextjs-monorepo 시리즈 10편 완료)
+**마지막 업데이트**: 2026-03-29 (spring-seaweedfs 시리즈 10편 완료)

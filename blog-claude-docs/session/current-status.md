@@ -80,7 +80,16 @@
 
 | 상태 | 제목 | 파일 | 날짜 |
 |------|------|------|------|
-| (예정) | — | — | — |
+| [x] | SeaweedFS란? | `01-what-is-seaweedfs.md` | 2026-03-29 |
+| [x] | 아키텍처 심화 | `02-architecture.md` | 2026-03-29 |
+| [x] | Docker로 로컬 환경 구축 | `03-docker-setup.md` | 2026-03-29 |
+| [x] | Filer REST API 실습 | `04-filer-api.md` | 2026-03-29 |
+| [x] | S3 호환 API 실습 | `05-s3-api.md` | 2026-03-29 |
+| [x] | Spring Boot 프로젝트 설정 | `06-spring-boot-setup.md` | 2026-03-29 |
+| [x] | 파일 업로드/다운로드 구현 | `07-file-upload-download.md` | 2026-03-29 |
+| [x] | 대용량 파일 처리 | `08-large-file-handling.md` | 2026-03-29 |
+| [x] | 데이터 안정성 (복제 + EC) | `09-replication-ec.md` | 2026-03-29 |
+| [x] | 프로덕션 운영 가이드 | `10-production-guide.md` | 2026-03-29 |
 
 ---
 
