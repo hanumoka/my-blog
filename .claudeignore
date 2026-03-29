@@ -1,0 +1,21 @@
+# Claude Code ignore — my-blog
+
+# 시스템/OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Git
+.git/
+
+# 로그
+.claude/logs/
+*.log
+
+# 임시 파일
+*.tmp
+*.bak
+*~
+
+# 복구 파일 (자동 생성, 컨텍스트 주입용)
+.project-memory/pre-compact-recovery.md
