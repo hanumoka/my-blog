@@ -90,7 +90,7 @@ sudo apt-get install -y ca-certificates curl
 # Docker GPG 키 등록 (패키지 무결성 검증용)
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
-  -o /etc/apt/keyrings/docker.asc
+  | sudo tee /etc/apt/keyrings/docker.asc > /dev/null
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
 # Docker APT 저장소 추가
