@@ -923,7 +923,12 @@ zzz333www444   test-nginx.2     nginx:latest   node-2   Running         Running 
 aaa555bbb666   test-nginx.3     nginx:latest   node-3   Running         Running 26 seconds ago
 ```
 
-각 노드에 1개씩 분산 배포된 것을 확인할 수 있다. 아무 노드에서나 `curl localhost:8080`을 실행하면 nginx 응답이 온다 — 어느 노드에서 요청해도 Swarm의 내부 로드밸런서가 알아서 처리한다.
+각 노드에 1개씩 분산 배포된 것을 확인할 수 있다. 아무 노드에서나 아래 명령을 실행하면 nginx 응답이 온다 — 어느 노드에서 요청해도 Swarm의 내부 로드밸런서가 알아서 처리한다.
+
+```bash
+# IPv4로 명시적 접속 (-4 옵션). localhost는 IPv6를 먼저 시도할 수 있음.
+curl -4 http://localhost:8080
+```
 
 ### 7-4. overlay 네트워크 노드 간 통신 검증
 
@@ -1054,6 +1059,30 @@ docker version --format '{{.Server.Version}}'
 # daemon.json에서 live-restore 제거 후
 sudo systemctl restart docker
 ```
+
+### 실수 7: curl localhost가 응답 없이 멈춤 (IPv6 문제)
+
+**증상**: `curl localhost:8080`이 응답 없이 멈추지만, 서비스는 `3/3` 정상 실행 중.
+
+**원인**: Docker Ingress는 **IPv4로만** 리스닝한다. 그런데 `curl localhost`는 IPv6(`::1`)를 먼저 시도하므로 연결은 되지만 응답을 받지 못한다.
+
+```
+curl localhost:8080
+* Trying [::1]:8080...          ← IPv6로 시도 → 응답 없음 (hang)
+
+curl -4 localhost:8080
+* Trying 127.0.0.1:8080...     ← IPv4로 시도 → 정상 응답 ✅
+```
+
+**해결**: `-4` 옵션으로 IPv4를 강제하거나, IP를 직접 지정한다.
+
+```bash
+curl -4 http://localhost:8080
+# 또는
+curl http://127.0.0.1:8080
+```
+
+> 이것은 Docker의 알려진 동작이며 Swarm 설정 문제가 아니다. 실제 서비스에서는 외부 클라이언트가 서버의 실제 IP(예: `192.168.1.101:8080`)로 접속하므로 이 문제가 발생하지 않는다.
 
 ---
 
