@@ -959,9 +959,88 @@ wget -qO- test-nginx   # 같은 overlay 네트워크의 nginx에 HTTP 요청
 exit
 ```
 
-정상이면:
-- `ping test-ping` — 응답이 온다 (VIP를 통한 통신)
-- `nslookup test-ping` — `10.0.x.x` 대역의 VIP가 반환된다
+#### 결과 해석
+
+**1) `ping -c 3 test-ping` — Swarm DNS + VIP 검증**
+
+```
+PING test-ping (10.0.1.9): 56 data bytes
+64 bytes from 10.0.1.9: seq=0 ttl=64 time=0.182 ms
+```
+
+```
+컨테이너 내부에서 일어나는 일:
+
+  ping test-ping
+    │
+    ▼
+  Swarm 내장 DNS: "test-ping" → VIP 10.0.1.9 로 변환
+    │
+    ▼
+  VIP 10.0.1.9 ← 실제 컨테이너 IP가 아니라
+                   3개 컨테이너를 대표하는 가상 주소 (IPVS가 분배)
+```
+
+- `test-ping`이라는 **서비스 이름**이 DNS로 해석됨 → Swarm 내장 DNS 정상
+- `10.0.1.9`는 **VIP(Virtual IP)** — 3개 컨테이너를 묶는 대표 주소
+- `0% packet loss` → overlay 네트워크 통신 정상
+
+**2) `nslookup test-ping` — DNS 서버 확인**
+
+```
+Server:         127.0.0.11
+Address:        127.0.0.11:53
+
+Name:   test-ping
+Address: 10.0.1.9
+```
+
+- `127.0.0.11` — Swarm이 **모든 컨테이너에 자동 주입**하는 내장 DNS 서버. 직접 설정한 적 없지만 알아서 동작한다
+- 서비스 이름만으로 다른 서비스에 접근 가능 → IP를 외울 필요 없음
+- 이것이 **서비스 디스커버리**의 핵심이다. 컨테이너가 죽고 다시 떠도 서비스 이름은 변하지 않는다
+
+**3) `wget -qO- test-nginx` — 서비스 간 HTTP 통신 검증**
+
+```
+<h1>Welcome to nginx!</h1>
+```
+
+```
+test-ping 컨테이너에서 test-nginx로 HTTP 요청:
+
+  test-ping 컨테이너
+    │
+    │ wget test-nginx (HTTP 요청)
+    ▼
+  Swarm DNS → VIP → overlay 네트워크 → test-nginx 컨테이너
+    │
+    ▼
+  nginx가 HTML 응답 → "Welcome to nginx!" 수신 ✅
+```
+
+- **다른 서비스**에 서비스 이름만으로 HTTP 통신 성공
+- 실제 애플리케이션에서도 이 방식을 그대로 쓴다:
+
+```yaml
+# 예: Spring Boot의 application.yml
+spring:
+  datasource:
+    url: jdbc:postgresql://my-db:5432/appdb
+    #                      ^^^^^^ 서비스 이름으로 접근 (IP 불필요)
+  redis:
+    host: my-redis    # ← 서비스 이름
+    port: 6379
+```
+
+**이 테스트로 검증된 전체 항목:**
+
+```
+  ✅ Swarm 내장 DNS (127.0.0.11)     → 서비스 이름 → IP 변환
+  ✅ VIP 로드밸런싱 (IPVS)            → 여러 컨테이너에 자동 분배
+  ✅ overlay 네트워크 (VXLAN)         → 노드 간 컨테이너 통신
+  ✅ 커널 모듈 (br_netfilter, vxlan)  → 이것들이 없으면 위 전부 실패
+  ✅ 서비스 디스커버리                  → IP 몰라도 이름으로 접근
+```
 
 **실패 시 의심할 것**: `vxlan` 모듈 미로드, 4789/UDP 포트 차단, MTU 불일치
 
