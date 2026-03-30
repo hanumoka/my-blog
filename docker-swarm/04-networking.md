@@ -64,6 +64,128 @@ Swarm을 초기화하면 `ingress` 네트워크가 자동으로 생성됩니다.
 
 ---
 
+### Ingress의 동작 원리 — Routing Mesh
+
+```
+서비스: nginx (replicas=2, port 8080:80)
+Task는 node-2, node-3에만 있음
+
+  외부 클라이언트
+    │
+    │ http://any-node:8080
+    ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │                    ingress 네트워크                        │
+  │              (모든 노드가 8080을 리스닝)                    │
+  │                                                          │
+  │   node-1              node-2              node-3          │
+  │  ┌──────────┐       ┌──────────┐       ┌──────────┐      │
+  │  │ :8080    │       │ :8080    │       │ :8080    │      │
+  │  │ [IPVS]   │       │ [IPVS]  │       │ [IPVS]  │      │
+  │  │ Task 없음 │       │ [nginx] │       │ [nginx] │      │
+  │  └────┬─────┘       └──────────┘       └──────────┘      │
+  │       │                                                  │
+  │       └──── IPVS가 node-2 또는 node-3으로 전달 ──────▶   │
+  └──────────────────────────────────────────────────────────┘
+```
+
+동작 단계:
+
+1. `docker service create -p 8080:80 nginx` → Swarm이 **모든 노드**에서 8080 포트를 열음
+2. 외부 요청이 node-1:8080으로 도착 → node-1에는 nginx Task가 없음
+3. node-1의 IPVS(커널 로드밸런서)가 ingress 네트워크를 통해 Task가 있는 node-2 또는 node-3으로 전달
+4. nginx가 응답 → 같은 경로로 클라이언트에게 반환
+
+> Ingress는 별도 Task/컨테이너가 아니라 **Docker Engine에 내장된 커널 레벨(IPVS) 기능**이다. 설치나 설정 없이 자동으로 동작한다.
+
+### Ingress는 L4 — 포트 기반만 가능
+
+Swarm Ingress는 **L4(포트 기반)** 로드밸런서다. 포트 번호로만 서비스를 구분한다.
+
+```
+Ingress로 할 수 있는 것:
+  :8080 → nginx 서비스         ✅ 포트 기반 라우팅
+  :3000 → react 서비스          ✅ 다른 포트, 다른 서비스
+
+Ingress로 할 수 없는 것:
+  api.example.com → API 서비스   ❌ 도메인 기반 라우팅
+  /api/* → backend               ❌ URL 경로 기반 라우팅
+  SSL 인증서 → HTTPS 종료        ❌ TLS termination
+```
+
+그래서 실무에서는 Swarm Ingress **앞에** 리버스 프록시를 둔다:
+
+```
+실무 구성:
+
+  클라이언트
+    │
+    ▼
+  ┌──────────────────────────────────┐
+  │  nginx / traefik (리버스 프록시)   │  ← L7 라우팅 + SSL 처리
+  │                                  │
+  │  api.example.com → :8001         │
+  │  web.example.com → :8002         │
+  │  SSL 인증서 관리                   │
+  └──────────┬───────────────────────┘
+             │
+  ┌──────────▼───────────────────────┐
+  │  Swarm Ingress (L4)              │  ← 포트별 Task 분배
+  │  :8001 → api-service             │
+  │  :8002 → web-service             │
+  └──────────────────────────────────┘
+```
+
+### Docker Swarm Ingress vs Kubernetes Ingress
+
+이름은 같지만 **완전히 다른 개념**이다.
+
+| 항목 | Docker Swarm Ingress | Kubernetes Ingress |
+|------|---------------------|-------------------|
+| **동작 계층** | L4 (TCP/UDP 포트) | L7 (HTTP 도메인/경로) |
+| **설치** | 자동 (`swarm init` 시 생성) | 별도 Ingress Controller 설치 필요 |
+| **라우팅 기준** | **포트 번호**만 | 도메인, URL 경로, 헤더 등 |
+| **설정** | `-p 8080:80`이면 끝 | YAML로 Ingress 리소스 정의 |
+| **SSL 종료** | 지원 안 함 (별도 리버스 프록시 필요) | Ingress Controller에서 처리 |
+| **구현체** | Docker Engine 내장 IPVS | nginx, traefik, HAProxy 등 선택 |
+
+```yaml
+# Kubernetes Ingress 리소스 예시 (Swarm에는 이런 개념 자체가 없음)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+  - host: api.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 8080
+  - host: web.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-service
+            port:
+              number: 3000
+```
+
+정리하면:
+
+- **Docker Swarm Ingress** = "어떤 노드로 요청해도 알아서 Task로 보내주는 **자동 포트 라우터**" (L4, 설정 불필요)
+- **Kubernetes Ingress** = "도메인/경로별로 트래픽을 분배하는 **설정 가능한 HTTP 라우터**" (L7, Controller 설치 필요)
+
+---
+
 ## 2. Overlay 네트워크 (직접 생성)
 
 서비스 간 내부 통신을 위한 네트워크입니다.
