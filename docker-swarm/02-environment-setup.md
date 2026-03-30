@@ -128,9 +128,10 @@ sudo apt-get install -y \
 
 ```bash
 sudo usermod -aG docker $USER
+newgrp docker   # 현재 세션에 즉시 반영 (재로그인 없이)
 ```
 
-> **주의**: 그룹 변경은 **재로그인 후** 적용된다. 현재 세션에서 바로 쓰려면 `newgrp docker`를 실행한다.
+> **주의**: `newgrp docker`를 실행하지 않으면 현재 세션에서 `docker` 명령 시 **permission denied**가 발생한다. 재로그인해도 되지만, 이후 Step을 이어서 진행하려면 `newgrp docker`가 편하다.
 
 ### 1-5. 서비스 시작 및 자동 시작 등록
 
@@ -679,6 +680,8 @@ net.bridge.bridge-nf-call-iptables = 1
 
 `daemon.json`은 Docker 데몬(백그라운드 서비스) 전체 동작 방식을 설정하는 파일이다. 기본값만으로도 Swarm은 동작하지만, 운영 환경에서는 아래 설정이 없으면 **로그 파일이 디스크를 꽉 채우는** 문제가 생긴다.
 
+> 💡 Step 1에서 이미 Docker를 시작했으므로, 아래 설정 후 `restart`가 필요하다. 아직 Docker를 시작하지 않았다면 설정 파일을 먼저 만들고 `start`하면 restart 없이 적용된다.
+
 **모든 노드**에서 실행한다.
 
 ```bash
@@ -921,9 +924,45 @@ aaa555bbb666   test-nginx.3     nginx:latest   node-3   Running         Running 
 
 각 노드에 1개씩 분산 배포된 것을 확인할 수 있다. 아무 노드에서나 `curl localhost:8080`을 실행하면 nginx 응답이 온다 — 어느 노드에서 요청해도 Swarm의 내부 로드밸런서가 알아서 처리한다.
 
+### 7-4. overlay 네트워크 노드 간 통신 검증
+
+위의 `curl localhost:8080`은 Ingress 라우팅만 확인한다. **overlay 네트워크를 통해 서로 다른 노드의 컨테이너끼리 직접 통신**이 되는지도 반드시 검증해야 한다. 이것이 실패하면 커널 모듈이나 방화벽 설정에 문제가 있는 것이다.
+
+```bash
+# 테스트용 서비스 배포 (alpine + sleep으로 컨테이너 유지)
+docker service create \
+  --name test-ping \
+  --replicas 3 \
+  --network test-overlay \
+  alpine sleep 3600
+```
+
+```bash
+# Task가 어떤 노드에 배포됐는지 확인
+docker service ps test-ping
+```
+
+```bash
+# node-1에 있는 컨테이너에 접속해서 다른 노드의 컨테이너로 ping
+docker exec -it $(docker ps -q -f name=test-ping) sh
+
+# 컨테이너 내부에서: 서비스 이름으로 DNS 통신 테스트
+ping -c 3 test-ping    # VIP로 응답이 와야 정상
+nslookup test-ping     # DNS 해석 확인
+wget -qO- test-nginx   # 같은 overlay 네트워크의 nginx에 HTTP 요청
+exit
+```
+
+정상이면:
+- `ping test-ping` — 응답이 온다 (VIP를 통한 통신)
+- `nslookup test-ping` — `10.0.x.x` 대역의 VIP가 반환된다
+
+**실패 시 의심할 것**: `vxlan` 모듈 미로드, 4789/UDP 포트 차단, MTU 불일치
+
 **테스트 후 정리:**
 
 ```bash
+docker service rm test-ping
 docker service rm test-nginx
 docker network rm test-overlay
 ```
